@@ -1,0 +1,21 @@
+import time 
+import pyautogui
+
+
+def turnOffPcTroll():
+    try:
+        while True:
+            pyautogui.press('win')
+            print ("clicked windows button")
+            pyautogui.PAUSE = 0.2
+            pyautogui.click(1204, 980)
+            pyautogui.PAUSE = 0.2
+            pyautogui.click(1219, 910)
+            pyautogui.PAUSE = 0.2
+            pyautogui.click(1219, 910)
+            
+    except KeyboardInterrupt:
+        print("stop")
+
+if __name__ == "__main__":
+    turnOffPcTroll() 
