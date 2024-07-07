@@ -1,0 +1,15 @@
+import time
+import pyautogui
+
+def mouseMove():
+    try:
+        while True:
+            pyautogui.click(100, 0)
+            print("Mouse has been moved")
+            pyautogui.PAUSE = 10
+            pyautogui.move(0, 100)
+            print("Mouse has been moved")
+    except KeyboardInterrupt():
+        print("This action has been stoppped")
+if __name__ == "__main__":
+    mouseMove() 
