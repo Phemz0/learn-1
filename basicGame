@@ -1,0 +1,220 @@
+import pygame
+import sys
+import random
+
+# Initialize pygame
+pygame.init()
+
+# Screen dimensions
+WIDTH, HEIGHT = 900, 700
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Simple Shooter Game")
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)  # New power-up color
+
+# Player properties
+player_size = 50
+player_color = BLACK
+player_pos = [WIDTH // 2, HEIGHT - 2 * player_size]
+player_speed = 15
+font = pygame.font.Font(None, 74)
+
+# Bullet properties
+bullet_size = 15
+bullet_color = GREEN
+bullet_speed = 10
+bullets = []
+
+# Enemy properties
+enemy_size = 35
+enemy_color = RED
+enemy_speed = 6
+enemies = []
+
+# Power-up properties
+powerup_size = 20
+powerup_color = BLUE
+bounce_powerup_color = YELLOW
+powerups = []
+bounce_powerups = []
+powerup_effect_duration = 4000  # 4 seconds
+powerup_active = False
+bounce_powerup_active = False
+powerup_end_time = 0
+bounce_powerup_end_time = 0
+
+# Game properties
+clock = pygame.time.Clock()
+FPS = 30
+score = 0
+last_shot_time = 0
+shoot_delay = 200  # milliseconds (0.2 seconds)
+
+# Function to create enemies
+def create_enemy():
+    x_pos = random.randint(0, WIDTH - enemy_size)
+    y_pos = 0
+    return [x_pos, y_pos]
+
+# Function to create power-ups
+def create_powerup():
+    x_pos = random.randint(0, WIDTH - powerup_size)
+    y_pos = 0
+    return [x_pos, y_pos]
+
+# Function to create bounce power-ups
+def create_bounce_powerup():
+    x_pos = random.randint(0, WIDTH - powerup_size)
+    y_pos = 0
+    return [x_pos, y_pos]
+
+# Function to draw objects
+def draw_objects():
+    screen.fill(WHITE)
+    pygame.draw.rect(screen, player_color, (*player_pos, player_size, player_size))
+    for bullet in bullets:
+        pygame.draw.rect(screen, bullet_color, (*bullet[:2], bullet_size, bullet_size))
+    for enemy in enemies:
+        pygame.draw.rect(screen, enemy_color, (*enemy, enemy_size, enemy_size))
+    for powerup in powerups:
+        pygame.draw.rect(screen, powerup_color, (*powerup, powerup_size, powerup_size))
+    for bounce_powerup in bounce_powerups:
+        pygame.draw.rect(screen, bounce_powerup_color, (*bounce_powerup, powerup_size, powerup_size))
+    pygame.display.flip()
+
+# Main game loop
+running = True
+while running:
+    current_time = pygame.time.get_ticks()
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT] and player_pos[0] > 0:
+        player_pos[0] -= player_speed
+    if keys[pygame.K_RIGHT] and player_pos[0] < WIDTH - player_size:
+        player_pos[0] += player_speed
+    if keys[pygame.K_SPACE]:
+        if powerup_active or current_time - last_shot_time > shoot_delay:
+            if bounce_powerup_active:
+                bullets.append([player_pos[0] + player_size // 2 - bullet_size // 2, player_pos[1], random.choice([-1, 1]), -1])
+            else:
+                bullets.append([player_pos[0] + player_size // 2 - bullet_size // 2, player_pos[1], 0, -1])
+            last_shot_time = current_time
+
+    for bullet in bullets[:]:
+        if bounce_powerup_active:
+            bullet[0] += bullet_speed * bullet[2]
+            bullet[1] += bullet_speed * bullet[3]
+            if bullet[0] <= 0 or bullet[0] >= WIDTH - bullet_size:
+                bullet[2] *= -1
+            if bullet[1] <= 0 or bullet[1] >= HEIGHT - bullet_size:
+                bullet[3] *= -1
+        else:
+            bullet[1] += bullet_speed * bullet[3]
+            if bullet[1] < 0:
+                bullets.remove(bullet)
+
+    if random.randint(1, 20) == 1:
+        enemies.append(create_enemy())
+
+    if random.randint(1, 200) == 1:
+        powerups.append(create_powerup())
+
+    if random.randint(1, 200) == 1:
+        bounce_powerups.append(create_bounce_powerup())
+
+    enemies_to_remove = []
+    bullets_to_remove = []
+    powerups_to_remove = []
+    bounce_powerups_to_remove = []
+
+    for enemy in enemies:
+        enemy[1] += enemy_speed
+        if enemy[1] > HEIGHT:
+            enemies_to_remove.append(enemy)
+            score -= 1
+
+        for bullet in bullets:
+            if enemy[0] < bullet[0] < enemy[0] + enemy_size and enemy[1] < bullet[1] < enemy[1] + enemy_size:
+                enemies_to_remove.append(enemy)
+                bullets_to_remove.append(bullet)
+                score += 1
+
+    for powerup in powerups:
+        powerup[1] += enemy_speed
+        if powerup[1] > HEIGHT:
+            powerups_to_remove.append(powerup)
+        elif (player_pos[0] < powerup[0] < player_pos[0] + player_size and 
+              player_pos[1] < powerup[1] < player_pos[1] + player_size):
+            powerup_active = True
+            powerup_end_time = current_time + powerup_effect_duration
+            powerups_to_remove.append(powerup)
+
+    for bounce_powerup in bounce_powerups:
+        bounce_powerup[1] += enemy_speed
+        if bounce_powerup[1] > HEIGHT:
+            bounce_powerups_to_remove.append(bounce_powerup)
+        elif (player_pos[0] < bounce_powerup[0] < player_pos[0] + player_size and 
+              player_pos[1] < bounce_powerup[1] < player_pos[1] + player_size):
+            bounce_powerup_active = True
+            bounce_powerup_end_time = current_time + powerup_effect_duration
+            bounce_powerups_to_remove.append(bounce_powerup)
+
+    for enemy in enemies_to_remove:
+        if enemy in enemies:
+            enemies.remove(enemy)
+
+    for bullet in bullets_to_remove:
+        if bullet in bullets:
+            bullets.remove(bullet)
+
+    for powerup in powerups_to_remove:
+        if powerup in powerups:
+            powerups.remove(powerup)
+
+    for bounce_powerup in bounce_powerups_to_remove:
+        if bounce_powerup in bounce_powerups:
+            bounce_powerups.remove(bounce_powerup)
+
+    if powerup_active and current_time > powerup_end_time:
+        powerup_active = False
+
+    if bounce_powerup_active and current_time > bounce_powerup_end_time:
+        bounce_powerup_active = False
+
+    draw_objects()
+    clock.tick(FPS)
+
+    # Display score
+    pygame.display.set_caption(f"Harrys Epic Game - Score: {score}")
+
+    # Check if the score is less than 0 and end the game
+    if score == 175843795:
+        screen.fill(BLACK)
+        score_text = font.render("Game Over!", True, WHITE)
+        screen.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, HEIGHT // 2 - score_text.get_height() // 2))
+        pygame.display.flip()
+        pygame.time.wait(2000)  # wait for 2 seconds before quitting 
+        running = False
+
+    elif score == 100:
+        screen.fill(BLACK)
+        score_text = font.render("You have won the game!", True, WHITE)
+        screen.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, HEIGHT // 2 - score_text.get_height() // 2))
+        pygame.display.flip()
+        pygame.time.wait(2000)  # wait for 2 seconds before quitting 
+        running = False
+
+pygame.quit()
+sys.exit()
