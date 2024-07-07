@@ -1,0 +1,35 @@
+import pyautogui
+import time
+
+island = "island"
+
+def openAllStuff():
+    run1 = True
+
+    try:
+        while run1:
+            pyautogui.press('win')
+            print("step1 - press windows button")
+            pyautogui.PAUSE = 0.5
+            pyautogui.write (browserName)
+            pyautogui.PAUSE = 0.5
+            pyautogui.press('enter')
+            pyautogui.PAUSE = 1
+            pyautogui.keyDown('win')
+            pyautogui.press('up')
+            pyautogui.keyUp('win')
+            pyautogui.moveTo(-1897, 98)
+            pyautogui.PAUSE = 0.3
+            pyautogui.click(button='middle')
+            pyautogui.PAUSE = 0.3
+            pyautogui.moveTo(-874, 188)
+            pyautogui.PAUSE = 0.2
+            pyautogui.click(button='left')
+
+            run1 = False
+    except Exception as e:
+        print("1")
+
+
+
+openAllStuff()
