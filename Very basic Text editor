@@ -1,3 +1,5 @@
+# Project inspired from https://www.instructables.com/Create-a-Simple-Python-Text-Editor/
+
 import platform
 import tkinter
 from tkinter import Tk, Button, Text, filedialog
@@ -38,7 +40,7 @@ def FontCourier():
     text.config(font="Courier")
 #font=Menubutton(root,text="Font")
 #font.grid()
-
+# Can't get fonts to work
 root.mainloop()
 
 
