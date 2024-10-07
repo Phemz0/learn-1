@@ -1,0 +1,44 @@
+import platform
+import tkinter
+from tkinter import Tk, Button, Text, filedialog
+
+v = platform.python_version()
+
+if "2.7" in v:
+    from Tkinter import *
+else:
+    from tkinter import *
+
+root = Tk()
+root.title("Text Editor")  
+root.geometry("800x600")  #https://root.cern/manual/python/
+
+text = Text(root)
+text.pack(expand=True, fill='both')
+
+def saveas():
+    global text  
+    t = text.get("1.0", "end-1c")
+    savelocation = filedialog.asksaveasfilename(defaultextension=".txt",
+filetypes=[("Text files", "*.txt"),
+("All files", "*.*")])
+    if savelocation:  
+        with open(savelocation, "w") as file1:
+            file1.write(t)
+
+# Issue with save button, can't invoke button command.
+button = Button(root, text="Save", command=saveas)
+button.pack(pady=10)  
+
+def FontHelvetica():
+    global text
+    text.config(font="Helvetica")
+def FontCourier():
+    global text
+    text.config(font="Courier")
+#font=Menubutton(root,text="Font")
+#font.grid()
+
+root.mainloop()
+
+
