@@ -2,6 +2,9 @@ import platform
 import tkinter
 from tkinter import Tk, Button, Text, filedialog
 
+red = "#FF0000"
+
+
 v = platform.python_version()
 
 if "2.7" in v:
@@ -42,7 +45,21 @@ box.get(1.0)
 menu = Menu(root)
 root.config(menu=menu)
 
-font_menu = Menu(menu)
+
+File_menu = Menu(menu) # File menu
+menu.add_cascade(label="File", menu=File_menu)
+
+
+
+
+Edit_menu = Menu(menu) # Edit menu
+menu.add_cascade(label="Edit", menu=Edit_menu)
+
+
+
+
+
+font_menu = Menu(menu) # Font menu
 menu.add_cascade(label="Font", menu=font_menu)
 
 def change_font(font_name):
@@ -51,6 +68,18 @@ def change_font(font_name):
 font_menu.add_command(label="Helvetica", command=lambda: change_font("Helvetica"))
 font_menu.add_command(label="Courier", command=lambda: change_font("Courier"))
 font_menu.add_command(label="Comic Sans MS", command=lambda: change_font("Comic Sans MS"))
+font_menu.add_command(label="Terminal", command=lambda: change_font("Terminal"))
+font_menu.add_command(label="Eccentric Std", command=lambda: change_font("Eccentric Std"))
+font_menu.add_command(label="Arabic Transparent", command=lambda: change_font("Arabic Transparent"))
+font_menu.add_command(label="Rosewood Std Fill", command=lambda: change_font("Rosewood Std Fill"))
+font_menu.add_command(label="Hobo Std", command=lambda: change_font("Hobo Std"))
+font_menu.add_command(label="Cooper Std Black", command=lambda: change_font("Cooper Std Black"))
+font_menu.add_command(label="MS Sans Serif", command=lambda: change_font("MS Sans Serif"))
+font_menu.add_command(label="Trajan Pro", command=lambda: change_font("Trajan Pro"))
+font_menu.add_command(label="LilyUPC", command=lambda: change_font("LilyUPC"))
+font_menu.add_command(label="Great Vibes", command=lambda: change_font("Great Vibes"))
+font_menu.add_command(label="Calibri Light", command=lambda: change_font("Calibri Light"))
+font_menu.add_command(label="Wingdings 2", command=lambda: change_font("Wingdings 2"))
 
 def FontHelvetica():
     global text
