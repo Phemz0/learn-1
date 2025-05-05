@@ -1,0 +1,30 @@
+import random
+
+print("""
+              
+    This is a guess the number game,
+    you will be asked to guess a number within a 0 - 100 range,
+    if your guess is incorrect then a prompt stating higher or lower will be outputted,
+    based upon this prompt guess again until youre able to correctly identify the number.
+
+""")
+
+try:
+    range = list(range(0, 101))
+    random_number = random.choice(range)
+except:
+    print("Invalid number generation")
+    
+try:
+    for i in range:
+        user_guess = int(input("Take a guess: "))
+
+        if (random_number > user_guess):
+            print("Your guess is higher than the number")
+        elif (random_number < user_guess):
+            print("Your guess is lower than the number")
+        elif (random_number == user_guess):
+            print(f"Your guess is correct, the number was {random_number}!")
+            break
+except:
+    print("Invalid guess")
